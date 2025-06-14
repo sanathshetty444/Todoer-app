@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Authentication Demo - Todo App</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                padding: 20px;
+            }
+
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                overflow: hidden;
+            }
+
+            .header {
+                background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+                color: white;
+                padding: 30px;
+                text-align: center;
+            }
+
+            .header h1 {
+                font-size: 2.5rem;
+                margin-bottom: 10px;
+            }
+
+            .header p {
+                font-size: 1.1rem;
+                opacity: 0.9;
+            }
+
+            .demo-section {
+                padding: 30px;
+            }
+
+            .auth-form {
+                margin-bottom: 30px;
+                padding: 25px;
+                border: 2px solid #f0f0f0;
+                border-radius: 8px;
+                background: #fafafa;
+            }
+
+            .auth-form h3 {
+                color: #333;
+                margin-bottom: 20px;
+                font-size: 1.5rem;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: 600;
+                color: #555;
+            }
+
+            .form-group input {
+                width: 100%;
+                padding: 12px;
+                border: 2px solid #ddd;
+                border-radius: 6px;
+                font-size: 16px;
+                transition: border-color 0.3s;
+            }
+
+            .form-group input:focus {
+                outline: none;
+                border-color: #4caf50;
+            }
+
+            .btn {
+                background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+                color: white;
+                padding: 12px 24px;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 16px;
+                font-weight: 600;
+                transition: transform 0.2s;
+                margin-right: 10px;
+                margin-bottom: 10px;
+            }
+
+            .btn:hover {
+                transform: translateY(-2px);
+            }
+
+            .btn-secondary {
+                background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+            }
+
+            .btn-danger {
+                background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+            }
+
+            .response-area {
+                margin-top: 20px;
+                padding: 15px;
+                background: #f8f9fa;
+                border-radius: 6px;
+                border: 1px solid #e9ecef;
+                font-family: "Courier New", monospace;
+                font-size: 14px;
+                white-space: pre-wrap;
+                max-height: 300px;
+                overflow-y: auto;
+            }
+
+            .success {
+                background: #d4edda;
+                border-color: #c3e6cb;
+                color: #155724;
+            }
+
+            .error {
+                background: #f8d7da;
+                border-color: #f5c6cb;
+                color: #721c24;
+            }
+
+            .token-display {
+                background: #e3f2fd;
+                border: 1px solid #bbdefb;
+                padding: 10px;
+                border-radius: 4px;
+                margin: 10px 0;
+                word-break: break-all;
+                font-family: "Courier New", monospace;
+                font-size: 12px;
+            }
+
+            .status-indicator {
+                display: inline-block;
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                margin-right: 8px;
+            }
+
+            .status-connected {
+                background: #4caf50;
+            }
+
+            .status-disconnected {
+                background: #f44336;
+            }
+
+            .endpoints-list {
+                background: #f8f9fa;
+                padding: 20px;
+                border-radius: 8px;
+                margin-top: 20px;
+            }
+
+            .endpoints-list h4 {
+                margin-bottom: 15px;
+                color: #333;
+            }
+
+            .endpoints-list ul {
+                list-style: none;
+            }
+
+            .endpoints-list li {
+                padding: 8px 0;
+                border-bottom: 1px solid #e9ecef;
+                font-family: "Courier New", monospace;
+            }
+
+            .endpoints-list li:last-child {
+                border-bottom: none;
+            }
+
+            .method {
+                background: #4caf50;
+                color: white;
+                padding: 2px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+                margin-right: 10px;
+            }
+
+            .method.post {
+                background: #2196f3;
+            }
+
+            .method.get {
+                background: #4caf50;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>🔐 Authentication Demo</h1>
+                <p>Complete JWT + Refresh Token Authentication System</p>
+                <div style="margin-top: 15px">
+                    <span class="status-indicator" id="serverStatus"></span>
+                    <span id="serverStatusText">Checking server...</span>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <!-- Registration Form -->
+                <div class="auth-form">
+                    <h3>👤 User Registration</h3>
+                    <div class="form-group">
+                        <label for="regEmail">Email:</label>
+                        <input
+                            type="email"
+                            id="regEmail"
+                            placeholder="user@example.com"
+                            value="demo.web@example.com"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="regName">Name:</label>
+                        <input
+                            type="text"
+                            id="regName"
+                            placeholder="Your Name"
+                            value="Demo Web User"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="regPassword">Password:</label>
+                        <input
+                            type="password"
+                            id="regPassword"
+                            placeholder="Password123!"
+                            value="WebDemo123!"
+                        />
+                    </div>
+                    <button class="btn" onclick="register()">
+                        Register User
+                    </button>
+                    <div class="response-area" id="registerResponse"></div>
+                </div>
+
+                <!-- Login Form -->
+                <div class="auth-form">
+                    <h3>🔑 User Login</h3>
+                    <div class="form-group">
+                        <label for="loginEmail">Email:</label>
+                        <input
+                            type="email"
+                            id="loginEmail"
+                            placeholder="user@example.com"
+                            value="demo.web@example.com"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password:</label>
+                        <input
+                            type="password"
+                            id="loginPassword"
+                            placeholder="Password123!"
+                            value="WebDemo123!"
+                        />
+                    </div>
+                    <button class="btn" onclick="login()">Login</button>
+                    <div class="response-area" id="loginResponse"></div>
+                </div>
+
+                <!-- Token Operations -->
+                <div class="auth-form">
+                    <h3>🔄 Token Operations</h3>
+                    <button
+                        class="btn btn-secondary"
+                        onclick="testProtectedRoute()"
+                    >
+                        Test Protected Route
+                    </button>
+                    <button class="btn btn-secondary" onclick="refreshToken()">
+                        Refresh Access Token
+                    </button>
+                    <button class="btn btn-danger" onclick="logout()">
+                        Logout User
+                    </button>
+                    <div class="response-area" id="tokenResponse"></div>
+                </div>
+
+                <!-- Current Tokens Display -->
+                <div class="auth-form">
+                    <h3>🎫 Current Tokens</h3>
+                    <div>
+                        <strong>Access Token:</strong>
+                        <div class="token-display" id="accessTokenDisplay">
+                            No access token
+                        </div>
+                    </div>
+                    <div>
+                        <strong>Refresh Token:</strong>
+                        <div class="token-display" id="refreshTokenDisplay">
+                            No refresh token
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API Endpoints -->
+                <div class="endpoints-list">
+                    <h4>📡 Available Endpoints</h4>
+                    <ul>
+                        <li>
+                            <span class="method post">POST</span>
+                            /api/auth/register - Register new user
+                        </li>
+                        <li>
+                            <span class="method post">POST</span>
+                            /api/auth/login - Login user
+                        </li>
+                        <li>
+                            <span class="method post">POST</span>
+                            /api/auth/refresh - Refresh access token
+                        </li>
+                        <li>
+                            <span class="method post">POST</span>
+                            /api/auth/logout - Logout user
+                        </li>
+                        <li>
+                            <span class="method get">GET</span> /api/protected -
+                            Protected route example
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const API_BASE = "http://localhost:3000";
+            let currentTokens = {
+                accessToken: null,
+                refreshToken: null,
+            };
+
+            // Check server status on load
+            window.onload = checkServerStatus;
+
+            async function checkServerStatus() {
+                try {
+                    const response = await fetch(API_BASE);
+                    if (response.ok) {
+                        document.getElementById("serverStatus").className =
+                            "status-indicator status-connected";
+                        document.getElementById(
+                            "serverStatusText"
+                        ).textContent = "Server Connected";
+                    } else {
+                        throw new Error("Server not responding");
+                    }
+                } catch (error) {
+                    document.getElementById("serverStatus").className =
+                        "status-indicator status-disconnected";
+                    document.getElementById("serverStatusText").textContent =
+                        "Server Disconnected";
+                }
+            }
+
+            function updateTokenDisplay() {
+                const accessDisplay =
+                    document.getElementById("accessTokenDisplay");
+                const refreshDisplay = document.getElementById(
+                    "refreshTokenDisplay"
+                );
+
+                if (currentTokens.accessToken) {
+                    accessDisplay.textContent =
+                        currentTokens.accessToken.substring(0, 50) + "...";
+                } else {
+                    accessDisplay.textContent = "No access token";
+                }
+
+                if (currentTokens.refreshToken) {
+                    refreshDisplay.textContent =
+                        currentTokens.refreshToken.substring(0, 50) + "...";
+                } else {
+                    refreshDisplay.textContent = "No refresh token";
+                }
+            }
+
+            function displayResponse(elementId, response, isSuccess = true) {
+                const element = document.getElementById(elementId);
+                element.textContent = JSON.stringify(response, null, 2);
+                element.className = isSuccess
+                    ? "response-area success"
+                    : "response-area error";
+            }
+
+            async function register() {
+                const email = document.getElementById("regEmail").value;
+                const name = document.getElementById("regName").value;
+                const password = document.getElementById("regPassword").value;
+
+                try {
+                    const response = await fetch(
+                        `${API_BASE}/api/auth/register`,
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ email, name, password }),
+                        }
+                    );
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        currentTokens.accessToken = data.tokens.accessToken;
+                        currentTokens.refreshToken = data.tokens.refreshToken;
+                        updateTokenDisplay();
+                        displayResponse("registerResponse", data, true);
+                    } else {
+                        displayResponse("registerResponse", data, false);
+                    }
+                } catch (error) {
+                    displayResponse(
+                        "registerResponse",
+                        { error: error.message },
+                        false
+                    );
+                }
+            }
+
+            async function login() {
+                const email = document.getElementById("loginEmail").value;
+                const password = document.getElementById("loginPassword").value;
+
+                try {
+                    const response = await fetch(`${API_BASE}/api/auth/login`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ email, password }),
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        currentTokens.accessToken = data.tokens.accessToken;
+                        currentTokens.refreshToken = data.tokens.refreshToken;
+                        updateTokenDisplay();
+                        displayResponse("loginResponse", data, true);
+                    } else {
+                        displayResponse("loginResponse", data, false);
+                    }
+                } catch (error) {
+                    displayResponse(
+                        "loginResponse",
+                        { error: error.message },
+                        false
+                    );
+                }
+            }
+
+            async function testProtectedRoute() {
+                if (!currentTokens.accessToken) {
+                    displayResponse(
+                        "tokenResponse",
+                        {
+                            error: "No access token available. Please login first.",
+                        },
+                        false
+                    );
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${API_BASE}/api/protected`, {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Bearer ${currentTokens.accessToken}`,
+                        },
+                    });
+
+                    const data = await response.json();
+                    displayResponse("tokenResponse", data, response.ok);
+                } catch (error) {
+                    displayResponse(
+                        "tokenResponse",
+                        { error: error.message },
+                        false
+                    );
+                }
+            }
+
+            async function refreshToken() {
+                if (!currentTokens.refreshToken) {
+                    displayResponse(
+                        "tokenResponse",
+                        {
+                            error: "No refresh token available. Please login first.",
+                        },
+                        false
+                    );
+                    return;
+                }
+
+                try {
+                    const response = await fetch(
+                        `${API_BASE}/api/auth/refresh`,
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                refreshToken: currentTokens.refreshToken,
+                            }),
+                        }
+                    );
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        currentTokens.accessToken = data.accessToken;
+                        updateTokenDisplay();
+                        displayResponse("tokenResponse", data, true);
+                    } else {
+                        displayResponse("tokenResponse", data, false);
+                    }
+                } catch (error) {
+                    displayResponse(
+                        "tokenResponse",
+                        { error: error.message },
+                        false
+                    );
+                }
+            }
+
+            async function logout() {
+                if (!currentTokens.refreshToken) {
+                    displayResponse(
+                        "tokenResponse",
+                        {
+                            error: "No refresh token available. Please login first.",
+                        },
+                        false
+                    );
+                    return;
+                }
+
+                try {
+                    const response = await fetch(
+                        `${API_BASE}/api/auth/logout`,
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                refreshToken: currentTokens.refreshToken,
+                            }),
+                        }
+                    );
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        currentTokens.accessToken = null;
+                        currentTokens.refreshToken = null;
+                        updateTokenDisplay();
+                        displayResponse("tokenResponse", data, true);
+                    } else {
+                        displayResponse("tokenResponse", data, false);
+                    }
+                } catch (error) {
+                    displayResponse(
+                        "tokenResponse",
+                        { error: error.message },
+                        false
+                    );
+                }
+            }
+        </script>
+    </body>
+</html>

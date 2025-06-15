@@ -59,50 +59,6 @@ export const useDashboard = () => {
         fetchTodos(1, 10, search, status);
     };
 
-    const handleSubtaskEdit = async (props: {
-        title: string;
-        subtaskId: number;
-        todoId: number;
-    }) => {
-        try {
-            await SubtasksApi.update(props.subtaskId, {
-                title: props.title,
-            });
-
-            // Refresh todos to get updated data
-            fetchTodos(1, 10, search);
-        } catch (error) {
-            console.error("Error updating subtask:", error);
-        }
-    };
-
-    const handleSubtaskStatusUpdate = async (props: {
-        subtaskId: number;
-        status: TODO_STATUS;
-    }) => {
-        try {
-            await SubtasksApi.updateStatus(props.subtaskId, {
-                status: props.status,
-            });
-
-            // Refresh todos to get updated data
-            fetchTodos(1, 10, search);
-        } catch (error) {
-            console.error("Error updating subtask status:", error);
-        }
-    };
-
-    const handleDeleteSubTask = async (subTaskId: number) => {
-        try {
-            await SubtasksApi.delete(subTaskId);
-
-            // Refresh todos to get updated data
-            fetchTodos(1, 10, search);
-        } catch (error) {
-            console.error("Error deleting subtask:", error);
-        }
-    };
-
     useEffect(() => {
         fetchTodos();
     }, []);
@@ -118,8 +74,5 @@ export const useDashboard = () => {
         handleSearch,
         handleFilter,
         fetchTodos,
-        handleSubtaskEdit,
-        handleSubtaskStatusUpdate,
-        handleDeleteSubTask,
     };
 };

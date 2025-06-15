@@ -272,6 +272,7 @@ router.get("/access-token", async (req: Request, res: Response) => {
             req.body?.refreshToken ||
             req.headers["x-refresh-token"];
 
+        console.log("Refresh token:=====", req.cookies);
         if (!refreshToken) {
             return res.status(401).json({
                 error: "Refresh token is required",

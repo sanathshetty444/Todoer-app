@@ -17,9 +17,6 @@ function Dashboard() {
         handleFilter,
         handleSearch,
         fetchTodos,
-        handleSubtaskEdit,
-        handleSubtaskStatusUpdate,
-        handleDeleteSubTask,
     } = useDashboard();
     const email = user ? JSON.parse(user).email : "";
 
@@ -27,9 +24,6 @@ function Dashboard() {
         <DashboardContext.Provider
             value={{
                 fetchTodos,
-                handleSubtaskEdit,
-                handleSubtaskStatusUpdate,
-                handleDeleteSubTask,
             }}
         >
             <Header />

@@ -5,6 +5,7 @@ import { Subtask } from "../models/Subtask";
 import type { SubtaskCreationAttributes } from "../models/Subtask";
 import { Todo } from "../models/Todo";
 import { Op } from "sequelize";
+import { TodoStatusService } from "../services/TodoStatusService";
 
 const router = Router();
 
@@ -719,6 +720,11 @@ router.put(
 
             // Update status
             await subtask.updateStatus(status as any);
+
+            // Update parent todo status based on all subtasks
+            await TodoStatusService.updateTodoStatusFromSubtasks(
+                subtask.todo_id
+            );
 
             res.json({
                 success: true,

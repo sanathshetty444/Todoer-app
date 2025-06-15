@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
     Accordion,
     AccordionContent,
@@ -6,20 +5,20 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 
-import { Edit, Trash2, Plus, X } from "lucide-react";
-import { TTodo } from "@/types";
+import { Edit, Trash2 } from "lucide-react";
+import { TODO_STATUS, TSubtask, TTodo } from "@/types";
 import SubtaskList from "./subtasksList";
+import { useEffect, useMemo, useState } from "react";
 
 const TodoAccordionList = ({ todos }: { todos: TTodo[] }) => {
     // Sample todo data
 
-    const [newSubtaskInputs, setNewSubtaskInputs] = useState({});
-
     // Status color mapping
-    const getStatusColor = (status) => {
+    const getStatusColor = (
+        status: (typeof TODO_STATUS)[keyof typeof TODO_STATUS]
+    ) => {
         switch (status) {
             case "completed":
                 return "bg-green-100 text-green-800";
@@ -35,103 +34,27 @@ const TodoAccordionList = ({ todos }: { todos: TTodo[] }) => {
     };
 
     // Format status text
-    const formatStatus = (status) => {
+    const formatStatus = (
+        status: (typeof TODO_STATUS)[keyof typeof TODO_STATUS]
+    ) => {
         return status.replace("_", " ").toUpperCase();
     };
 
-    // Get completed subtasks count
-    const getCompletedCount = (subtasks) => {
-        const completed = subtasks.filter(
-            (subtask) => subtask.completed
-        ).length;
-        return `${completed}/${subtasks.length}`;
-    };
+    const [completedCount, setCompletedCount] = useState<number[]>([]);
 
-    // Toggle accordion expansion
-    const toggleExpanded = (todoId) => {
-        setTodos(
-            todos.map((todo) =>
-                todo.id === todoId
-                    ? { ...todo, expanded: !todo.expanded }
-                    : todo
-            )
-        );
-    };
-
-    // Handle subtask completion toggle
-    const toggleSubtask = (todoId, subtaskId) => {
-        setTodos(
-            todos.map((todo) => {
-                if (todo.id === todoId) {
-                    return {
-                        ...todo,
-                        subtasks: todo.subtasks.map((subtask) =>
-                            subtask.id === subtaskId
-                                ? { ...subtask, completed: !subtask.completed }
-                                : subtask
-                        ),
-                    };
-                }
-                return todo;
-            })
-        );
-    };
-
-    // Handle subtask status change
-    const updateSubtaskStatus = (todoId, subtaskId, newStatus) => {
-        setTodos(
-            todos.map((todo) => {
-                if (todo.id === todoId) {
-                    return {
-                        ...todo,
-                        subtasks: todo.subtasks.map((subtask) =>
-                            subtask.id === subtaskId
-                                ? { ...subtask, status: newStatus }
-                                : subtask
-                        ),
-                    };
-                }
-                return todo;
-            })
-        );
-    };
-
-    // Handle subtask edit
-    const handleSubtaskEdit = (todoId, subtaskId, newTitle) => {
-        setTodos(
-            todos.map((todo) => {
-                if (todo.id === todoId) {
-                    return {
-                        ...todo,
-                        subtasks: todo.subtasks.map((subtask) =>
-                            subtask.id === subtaskId
-                                ? { ...subtask, title: newTitle }
-                                : subtask
-                        ),
-                    };
-                }
-                return todo;
-            })
-        );
-        setEditingSubtask(null);
-    };
-
-    // Handle adding new subtask
-    const addSubtask = (todoId) => {
-        const newSubtaskTitle = newSubtaskInputs[todoId]?.trim();
-        if (!newSubtaskTitle) return;
-
-        const newSubtask = {
-            id: Date.now(), // Simple ID generation
-            title: newSubtaskTitle,
-            completed: false,
-        };
-
-        setNewSubtaskInputs({ ...newSubtaskInputs, [todoId]: "" });
-    };
-
-    // Handle delete subtask
-    const deleteSubtask = (todoId, subtaskId) => {};
+    useEffect(() => {
+        setCompletedCount([
+            ...todos.map(
+                (todo) =>
+                    todo.subtasks?.reduce(
+                        (count, subtask) =>
+                            count +
+                            (subtask.status === TODO_STATUS.COMPLETED ? 1 : 0),
+                        0
+                    ) || 0
+            ),
+        ]);
+    }, [todos]);
 
     return (
         <div className="p-6 bg-gray-50 min-h-screen">
@@ -141,7 +64,7 @@ const TodoAccordionList = ({ todos }: { todos: TTodo[] }) => {
                     collapsible
                     className="w-full space-y-2"
                 >
-                    {todos.map((todo) => (
+                    {todos.map((todo, index) => (
                         <AccordionItem
                             key={todo.id}
                             value={`todo-${todo.id}`}
@@ -151,11 +74,22 @@ const TodoAccordionList = ({ todos }: { todos: TTodo[] }) => {
                                 <div className="flex items-center justify-between w-full">
                                     <div className="flex items-center gap-3">
                                         <div className="text-left">
-                                            <h3 className="font-semibold text-xl text-gray-900">
-                                                {todo.title}
-                                            </h3>
+                                            <div className="flex justify-items-start gap-4">
+                                                <h3 className="font-semibold text-xl text-gray-900">
+                                                    {todo.title}
+                                                </h3>
+                                                {todo.tags?.map((tag) => (
+                                                    <Badge
+                                                        key={tag?.id}
+                                                        variant="secondary"
+                                                        className="bg-blue-100 text-blue-800 hover:bg-blue-200 px-2 py-1 flex items-center gap-1 text-xs"
+                                                    >
+                                                        {tag?.name}
+                                                    </Badge>
+                                                ))}
+                                            </div>
                                             <p className="text-xl text-gray-500">
-                                                sasa
+                                                {todo.description}
                                             </p>
                                         </div>
                                     </div>
@@ -165,8 +99,8 @@ const TodoAccordionList = ({ todos }: { todos: TTodo[] }) => {
                                             {todo.category?.name}
                                         </span>
                                         <span className="text-xl text-gray-500">
-                                            {getCompletedCount(todo.subtasks)}{" "}
-                                            completed
+                                            {completedCount[index]}/
+                                            {todo?.subtasks?.length} completed
                                         </span>
                                         <Badge
                                             className={getStatusColor(
@@ -210,51 +144,23 @@ const TodoAccordionList = ({ todos }: { todos: TTodo[] }) => {
                             </AccordionTrigger>
 
                             <AccordionContent className="px-4 pb-4">
-                                <div className="space-y-3">
-                                    <h4 className="font-medium text-xl text-gray-900">
-                                        Subtasks
-                                    </h4>
-
-                                    {/* Add New Subtask Input */}
-                                    <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-                                        <Input
-                                            placeholder="Add a new subtask"
-                                            value={
-                                                newSubtaskInputs?.[todo.id] ||
-                                                ""
-                                            }
-                                            onChange={(e) =>
-                                                setNewSubtaskInputs({
-                                                    ...newSubtaskInputs,
-                                                    [todo.id]: e.target.value,
-                                                })
-                                            }
-                                            onKeyPress={(e) => {
-                                                if (e.key === "Enter") {
-                                                    addSubtask(todo.id);
-                                                }
-                                            }}
-                                            className="flex-1 border-0 bg-transparent focus:ring-0 text-xl"
-                                        />
-                                        <Button
-                                            onClick={() => addSubtask(todo.id)}
-                                            size="sm"
-                                            className="bg-white hover:bg-blue-100 text-blue px-3"
-                                            disabled={
-                                                !newSubtaskInputs[
-                                                    todo.id
-                                                ]?.trim()
-                                            }
-                                        >
-                                            <Plus className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-
-                                    {/* Existing Subtasks */}
-                                    <SubtaskList
-                                        subtasks={todo?.subtasks || []}
-                                    />
-                                </div>
+                                {/* Existing Subtasks */}
+                                <SubtaskList
+                                    todoId={todo.id}
+                                    onStatusChange={(updatedSubTasks) => {
+                                        const count = updatedSubTasks.reduce(
+                                            (acc, subtask) =>
+                                                acc +
+                                                (subtask.status ===
+                                                TODO_STATUS.COMPLETED
+                                                    ? 1
+                                                    : 0),
+                                            0
+                                        );
+                                        completedCount[index] = count;
+                                        setCompletedCount([...completedCount]);
+                                    }}
+                                />
                             </AccordionContent>
                         </AccordionItem>
                     ))}

@@ -113,6 +113,7 @@ router.get(
                         model: Subtask,
                         as: "subtasks",
                         attributes: ["id", "title", "status"],
+                        order: [["sequence", "ASC"]],
                     },
                 ],
                 order: [[sortField, sortDirection] as any],

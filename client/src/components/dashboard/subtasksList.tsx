@@ -1,5 +1,5 @@
 import { TODO_STATUS, TSubtask } from "@/types";
-import { Trash2, X } from "lucide-react";
+import { Plus, Trash2, X } from "lucide-react";
 import React, { useContext, useState } from "react";
 import {
     Select,
@@ -11,17 +11,55 @@ import {
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { DashboardContext } from "@/context/dashboard";
+import { useSubtaskList } from "@/hooks/useSubtaskList";
 
-function SubtaskList({ subtasks }: { subtasks: Partial<TSubtask>[] }) {
+function SubtaskList({
+    todoId,
+    onStatusChange,
+}: {
+    todoId: number;
+    onStatusChange: (subtask: TSubtask[]) => void;
+}) {
     const [editingSubtask, setEditingSubtask] = useState<number | null>(null);
+
     const {
+        subtasks,
         handleDeleteSubTask,
         handleSubtaskEdit,
         handleSubtaskStatusUpdate,
-    } = useContext(DashboardContext)!;
-
+        handleAddSubTask,
+        handleSubTaskChange,
+        loading,
+        newSubTask,
+    } = useSubtaskList(todoId, onStatusChange);
     return (
         <>
+            <div className="space-y-3">
+                <h4 className="font-medium text-xl text-gray-900">Subtasks</h4>
+
+                {/* Add New Subtask Input */}
+                <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                    <Input
+                        placeholder="Add a new subtask"
+                        value={newSubTask}
+                        onChange={handleSubTaskChange}
+                        onKeyPress={(e) => {
+                            if (e.key === "Enter") {
+                                handleAddSubTask();
+                            }
+                        }}
+                        className="flex-1 border-0 bg-transparent focus:ring-0 text-xl"
+                    />
+                    <Button
+                        onClick={() => handleAddSubTask()}
+                        size="sm"
+                        className="bg-white hover:bg-blue-100 text-blue px-3"
+                        disabled={!newSubTask?.trim() || loading}
+                    >
+                        <Plus className="h-4 w-4" />
+                    </Button>
+                </div>
+            </div>
             {subtasks.map((subtask) => (
                 <div
                     key={subtask.id}
@@ -87,22 +125,23 @@ function SubtaskList({ subtasks }: { subtasks: Partial<TSubtask>[] }) {
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="all">ALL</SelectItem>
-                                {Object.keys(TODO_STATUS).map((category) => (
-                                    <SelectItem
-                                        value={
-                                            TODO_STATUS[
-                                                category as keyof typeof TODO_STATUS
-                                            ]
-                                        }
-                                        key={category}
-                                    >
-                                        {category
-                                            .toUpperCase()
-                                            .split("_")
-                                            .join(" ")}
-                                    </SelectItem>
-                                ))}
+                                {Object.keys(TODO_STATUS)
+                                    .slice(1)
+                                    .map((category) => (
+                                        <SelectItem
+                                            value={
+                                                TODO_STATUS[
+                                                    category as keyof typeof TODO_STATUS
+                                                ]
+                                            }
+                                            key={category}
+                                        >
+                                            {category
+                                                .toUpperCase()
+                                                .split("_")
+                                                .join(" ")}
+                                        </SelectItem>
+                                    ))}
                             </SelectContent>
                         </Select>
                         <Button

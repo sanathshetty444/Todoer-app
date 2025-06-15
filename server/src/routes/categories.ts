@@ -38,6 +38,8 @@ router.get(
                 include_todo_count = "false",
             } = req.query;
 
+            console.log("Request query parameters:", req.user);
+
             // Build where clause
             const where: any = { user_id: req.user.userId };
 

@@ -49,7 +49,7 @@ function Dashboard() {
                     handleFilter={handleFilter}
                     handleSearch={handleSearch}
                 />
-                <TodoAccordionList todos={todos} />
+                <TodoAccordionList todoList={todos!} />
             </DashboardContext.Provider>
         </MainLayout>
     );

@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
+import { useNavigate } from "react-router-dom";
 
 function DashboardHeader({
     email,
@@ -9,6 +10,7 @@ function DashboardHeader({
     email: string;
     handleModalOpen: () => void;
 }) {
+    const navigate = useNavigate();
     return (
         <div className="flex flex-col p-6 gap-4">
             <div className="text-black hover:bg-white/10 text-4xl font-bold">
@@ -31,6 +33,7 @@ function DashboardHeader({
                         {/* Secondary Button - Manage Categories */}
                         <Button
                             variant="outline"
+                            onClick={() => navigate("/categories")}
                             className="px-6 py-3 border-blue-500 text-blue-500 hover:bg-blue-50 hover:text-blue-600 text-xl"
                         >
                             Manage Categories

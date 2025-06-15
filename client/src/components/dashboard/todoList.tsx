@@ -8,14 +8,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 import { Edit, Trash2 } from "lucide-react";
-import { TODO_STATUS, TTodo } from "@/types";
+import { TODO_STATUS, TTodo, TTodosListResponse } from "@/types";
 import SubtaskList from "./subtasksList";
 import { useContext, useMemo } from "react";
 import { DashboardContext } from "@/context/dashboard";
+import Pagination from "../common/pagination";
 
-const TodoAccordionList = ({ todos }: { todos: TTodo[] }) => {
+const TodoAccordionList = ({ todoList }: { todoList: TTodosListResponse }) => {
     // Sample todo data
-    const { handleEditTodo } = useContext(DashboardContext)!;
+    const todos = (todoList?.todos as TTodo[]) || [];
+    const { handleEditTodo, fetchTodos } = useContext(DashboardContext)!;
     // Status color mapping
     const getStatusColor = (
         status: (typeof TODO_STATUS)[keyof typeof TODO_STATUS]
@@ -56,7 +58,7 @@ const TodoAccordionList = ({ todos }: { todos: TTodo[] }) => {
     }, [todos]);
 
     return (
-        <div className="p-6 bg-gray-50 min-h-screen mt-4">
+        <div className="p-6 bg-gray-50 mt-4">
             <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-gray-900">Todos</h2>
             </div>
@@ -149,6 +151,29 @@ const TodoAccordionList = ({ todos }: { todos: TTodo[] }) => {
                     ))}
                 </Accordion>
             </div>
+            {todoList && (
+                <Pagination
+                    currentPage={todoList.pagination?.current_page}
+                    handleNext={() =>
+                        fetchTodos(2, todoList.pagination?.items_per_page)
+                    }
+                    handlePageChange={(pageNumber) =>
+                        fetchTodos(
+                            pageNumber,
+                            todoList.pagination?.items_per_page
+                        )
+                    }
+                    handlePrevious={() =>
+                        fetchTodos(
+                            todoList.pagination?.current_page - 1,
+                            todoList.pagination?.items_per_page
+                        )
+                    }
+                    totalItems={todoList.pagination?.total_items || 0}
+                    totalPages={todoList.pagination?.total_pages || 0}
+                    limit={todoList.pagination?.items_per_page || 10}
+                />
+            )}
         </div>
     );
 };

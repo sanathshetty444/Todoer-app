@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { TodoApi } from "@/data/todo";
 import { SubtasksApi } from "@/data/subtasks";
-import { TTodo, TODO_STATUS } from "@/types";
+import { TTodo, TODO_STATUS, TTodosListResponse } from "@/types";
 import { debounce, set } from "lodash";
 
 export const useDashboard = () => {
@@ -11,7 +11,7 @@ export const useDashboard = () => {
     const navigate = useNavigate();
     const [showTodo, setShowTodo] = useState(false);
     const [search, setSearchTodo] = useState("");
-    const [todos, setTodo] = useState<TTodo[]>([]);
+    const [todos, setTodo] = useState<TTodosListResponse>();
 
     const [editTodoFormContext, setEditTodoFormContext] = useState<{
         title: string;
@@ -58,7 +58,7 @@ export const useDashboard = () => {
     const fetchTodos = async (
         page = 1,
         limit = 10,
-        search = "",
+        searchText = "",
         status = ""
     ) => {
         // This function would typically fetch todos from an API.
@@ -68,12 +68,12 @@ export const useDashboard = () => {
         const todosRespones = await TodoApi.fetchAll({
             page,
             limit,
-            search,
+            search: searchText ?? search,
             status,
         });
 
         if (todosRespones?.data?.todos) {
-            setTodo([...todosRespones.data.todos]);
+            setTodo({ ...todosRespones.data });
         }
     };
     const handleSearchDebounced = useCallback(debounce(fetchTodos, 700), []);

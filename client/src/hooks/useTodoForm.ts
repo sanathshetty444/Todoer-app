@@ -1,10 +1,10 @@
 import { CategoryApi } from "@/data/category";
 import { TagsApi } from "@/data/tags";
 import { TodoApi } from "@/data/todo";
-import { TCategory } from "@/types";
 import { useContext, useEffect, useState } from "react";
 import { DashboardContext } from "@/context/dashboard";
 import useToast from "./useToast";
+import { useCategory } from "./useCategory";
 
 export const useTodoForm = ({
     isEdit,
@@ -30,8 +30,7 @@ export const useTodoForm = ({
 
     const [tags, setTags] = useState<string[]>([]);
 
-    const [categories, setCategories] = useState<Partial<TCategory>[]>([]);
-
+    const { categories, fetchCategories } = useCategory();
     const { toast } = useToast();
     useEffect(() => {
         console.log("useTodoForm mounted", isEdit, editTodoFormContext);
@@ -42,18 +41,8 @@ export const useTodoForm = ({
             });
             setTags(tags || []);
         }
-        fetchCategories();
     }, []);
 
-    const fetchCategories = async (page = 1, limit = 10, search = null) => {
-        const categoriesResponse = await CategoryApi.fetchAll({ page, limit });
-        setCategories([
-            ...categoriesResponse?.data?.categories?.map((item) => ({
-                id: item.id,
-                name: item.name,
-            })),
-        ]);
-    };
     const handleInputChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {

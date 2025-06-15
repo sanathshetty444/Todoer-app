@@ -56,8 +56,11 @@ const TodoAccordionList = ({ todos }: { todos: TTodo[] }) => {
     }, [todos]);
 
     return (
-        <div className="p-6 bg-gray-50 min-h-screen">
-            <div className="w-full space-y-2">
+        <div className="p-6 bg-gray-50 min-h-screen mt-4">
+            <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-gray-900">Todos</h2>
+            </div>
+            <div className="w-full space-y-4 mt-2">
                 <Accordion
                     type="single"
                     collapsible
@@ -69,7 +72,7 @@ const TodoAccordionList = ({ todos }: { todos: TTodo[] }) => {
                             value={`todo-${todo.id}`}
                             className="border rounded-lg"
                         >
-                            <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                            <AccordionTrigger className="p-6 hover:no-underline bg-card">
                                 <div className="flex items-center justify-between w-full">
                                     <div className="flex items-center gap-3">
                                         <div className="text-left">
@@ -139,8 +142,7 @@ const TodoAccordionList = ({ todos }: { todos: TTodo[] }) => {
                                 </div>
                             </AccordionTrigger>
 
-                            <AccordionContent className="px-4 pb-4">
-                                {/* Existing Subtasks */}
+                            <AccordionContent className="p-6 hover:no-underline bg-card">
                                 <SubtaskList todoId={todo.id} />
                             </AccordionContent>
                         </AccordionItem>

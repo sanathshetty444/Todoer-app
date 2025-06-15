@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
+import Categories from "./pages/Categories";
 
 function App() {
     return (
@@ -26,6 +27,9 @@ function App() {
 
                     {/* Dashboard route */}
                     <Route path="/dashboard" element={<Dashboard />} />
+
+                    {/* Categories route */}
+                    <Route path="/categories" element={<Categories />} />
 
                     {/* Placeholder for register route */}
                     <Route

@@ -5,6 +5,7 @@ import Header from "@/components/layout/Header";
 import TodoFormModal from "@/components/todo/TodoForm";
 import { DashboardContext } from "@/context/dashboard";
 import { useDashboard } from "@/hooks/useDashboard";
+import MainLayout from "@/layouts/main";
 
 function Dashboard() {
     const {
@@ -24,29 +25,33 @@ function Dashboard() {
     const email = user ? JSON.parse(user).email : "";
 
     return (
-        <DashboardContext.Provider
-            value={{
-                fetchTodos,
-                editTodoFormContext,
-                handleEditTodo,
-            }}
-        >
-            <Header />
-            <DashboardHeader handleModalOpen={handleOpenTodo} email={email} />
-            {showTodo && (
-                <TodoFormModal
-                    isEdit={isEdit}
-                    handleClose={handleCloseTodo}
-                    isOpen={showTodo}
+        <MainLayout>
+            <DashboardContext.Provider
+                value={{
+                    fetchTodos,
+                    editTodoFormContext,
+                    handleEditTodo,
+                }}
+            >
+                <DashboardHeader
+                    handleModalOpen={handleOpenTodo}
+                    email={email}
                 />
-            )}
-            <SearchTodo
-                searchText={search}
-                handleFilter={handleFilter}
-                handleSearch={handleSearch}
-            />
-            <TodoAccordionList todos={todos} />
-        </DashboardContext.Provider>
+                {showTodo && (
+                    <TodoFormModal
+                        isEdit={isEdit}
+                        handleClose={handleCloseTodo}
+                        isOpen={showTodo}
+                    />
+                )}
+                <SearchTodo
+                    searchText={search}
+                    handleFilter={handleFilter}
+                    handleSearch={handleSearch}
+                />
+                <TodoAccordionList todos={todos} />
+            </DashboardContext.Provider>
+        </MainLayout>
     );
 }
 

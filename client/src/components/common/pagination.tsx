@@ -95,7 +95,7 @@ function Pagination(props: {
                         {/* Next Button */}
                         <Button
                             variant="outline"
-                            size=""
+                            size="sm"
                             onClick={handleNext}
                             disabled={currentPage === totalPages}
                             className="flex items-center gap-1"

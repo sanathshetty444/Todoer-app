@@ -10,6 +10,7 @@ A comprehensive, full-stack todo management system built with modern technologie
 <img width="1470" alt="image" src="https://github.com/user-attachments/assets/178fd994-d5c1-4a9e-8e8b-a251ea56fa0e" />
 <img width="1470" alt="image" src="https://github.com/user-attachments/assets/43ff042d-0c46-47b0-8c99-e3d44b6bbfcb" />
 <img width="1470" alt="Screenshot 2025-06-15 at 8 31 12 PM" src="https://github.com/user-attachments/assets/2bd5dbf1-b151-43eb-8821-c2a66a5a5283" />
+<img width="1470" alt="image" src="https://github.com/user-attachments/assets/5fe4ffca-c546-4f25-8a91-5f45c84b6f47" />
 <img width="1470" alt="Screenshot 2025-06-15 at 8 29 14 PM" src="https://github.com/user-attachments/assets/a8b2f886-7df1-466a-8469-1248600ad0ef" />
 <img width="1470" alt="Screenshot 2025-06-15 at 8 29 34 PM" src="https://github.com/user-attachments/assets/01a06ba2-1b69-43e5-941e-7b28892f0e15" />
 

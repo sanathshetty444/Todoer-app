@@ -7,12 +7,13 @@ This document provides a comprehensive Entity Relationship Diagram (ERD) for the
 ## Database Overview
 
 The Todo Application uses a PostgreSQL database with 6 main entities:
-- **Users** - User accounts and authentication
-- **Categories** - Todo categorization system
-- **Tags** - Todo tagging system (many-to-many)
-- **Todos** - Main todo items
-- **Subtasks** - Todo subtasks and checklist items
-- **RefreshTokens** - JWT refresh token management
+
+-   **Users** - User accounts and authentication
+-   **Categories** - Todo categorization system
+-   **Tags** - Todo tagging system (many-to-many)
+-   **Todos** - Main todo items
+-   **Subtasks** - Todo subtasks and checklist items
+-   **RefreshTokens** - JWT refresh token management
 
 ## ERD Diagram
 
@@ -88,12 +89,12 @@ erDiagram
     users ||--o{ tags : "owns"
     users ||--o{ todos : "owns"
     users ||--o{ refresh_tokens : "has"
-    
+
     categories ||--o{ todos : "categorizes"
-    
+
     todos ||--o{ subtasks : "contains"
     todos }o--o{ tags : "tagged_with"
-    
+
     todo_tags }o--|| todos : "links"
     todo_tags }o--|| tags : "links"
 ```
@@ -101,6 +102,7 @@ erDiagram
 ## Detailed Table Specifications
 
 ### 1. Users Table
+
 ```sql
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -116,12 +118,14 @@ CREATE INDEX idx_users_email ON users(email);
 ```
 
 **Business Rules:**
-- Email must be unique across the system
-- Password is hashed using bcrypt with 12 salt rounds
-- Name and email are required fields
-- Email is normalized to lowercase
+
+-   Email must be unique across the system
+-   Password is hashed using bcrypt with 12 salt rounds
+-   Name and email are required fields
+-   Email is normalized to lowercase
 
 ### 2. Categories Table
+
 ```sql
 CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
@@ -137,11 +141,13 @@ CREATE UNIQUE INDEX idx_categories_user_name ON categories(user_id, name);
 ```
 
 **Business Rules:**
-- Category names must be unique per user
-- Categories are deleted when the user is deleted (CASCADE)
-- User can have unlimited categories
+
+-   Category names must be unique per user
+-   Categories are deleted when the user is deleted (CASCADE)
+-   User can have unlimited categories
 
 ### 3. Tags Table
+
 ```sql
 CREATE TABLE tags (
     id SERIAL PRIMARY KEY,
@@ -157,11 +163,13 @@ CREATE UNIQUE INDEX idx_tags_user_name ON tags(user_id, name);
 ```
 
 **Business Rules:**
-- Tag names must be unique per user
-- Tags are deleted when the user is deleted (CASCADE)
-- Tags have many-to-many relationship with todos
+
+-   Tag names must be unique per user
+-   Tags are deleted when the user is deleted (CASCADE)
+-   Tags have many-to-many relationship with todos
 
 ### 4. Todos Table
+
 ```sql
 CREATE TABLE todos (
     id SERIAL PRIMARY KEY,
@@ -188,14 +196,16 @@ CREATE INDEX idx_todos_status ON todos(status);
 ```
 
 **Business Rules:**
-- Title is required, description is optional
-- Status enum: 'not_started' | 'in_progress' | 'on_hold' | 'completed'
-- Completed and favorite are boolean flags
-- Sequence is used for user-defined ordering
-- Category is optional (nullable foreign key)
-- When category is deleted, todos become uncategorized (SET NULL)
+
+-   Title is required, description is optional
+-   Status enum: 'not_started' | 'in_progress' | 'on_hold' | 'completed'
+-   Completed and favorite are boolean flags
+-   Sequence is used for user-defined ordering
+-   Category is optional (nullable foreign key)
+-   When category is deleted, todos become uncategorized (SET NULL)
 
 ### 5. Subtasks Table
+
 ```sql
 CREATE TABLE subtasks (
     id SERIAL PRIMARY KEY,
@@ -214,13 +224,15 @@ CREATE INDEX idx_subtasks_sequence ON subtasks(sequence);
 ```
 
 **Business Rules:**
-- Subtasks belong to a parent todo
-- Title is required
-- Status matches todo status enum
-- Sequence is used for ordering within a todo
-- Subtasks are deleted when parent todo is deleted (CASCADE)
+
+-   Subtasks belong to a parent todo
+-   Title is required
+-   Status matches todo status enum
+-   Sequence is used for ordering within a todo
+-   Subtasks are deleted when parent todo is deleted (CASCADE)
 
 ### 6. Todo Tags Junction Table
+
 ```sql
 CREATE TABLE todo_tags (
     todo_id INTEGER NOT NULL REFERENCES todos(id) ON DELETE CASCADE,
@@ -235,11 +247,13 @@ CREATE INDEX idx_todo_tags_tag_id ON todo_tags(tag_id);
 ```
 
 **Business Rules:**
-- Many-to-many relationship between todos and tags
-- Composite primary key prevents duplicate relationships
-- Relationships are deleted when either todo or tag is deleted (CASCADE)
+
+-   Many-to-many relationship between todos and tags
+-   Composite primary key prevents duplicate relationships
+-   Relationships are deleted when either todo or tag is deleted (CASCADE)
 
 ### 7. Refresh Tokens Table
+
 ```sql
 CREATE TABLE refresh_tokens (
     id SERIAL PRIMARY KEY,
@@ -258,77 +272,88 @@ CREATE INDEX idx_refresh_tokens_expires_at ON refresh_tokens(expires_at);
 ```
 
 **Business Rules:**
-- Tokens are unique across the system
-- Token length is fixed at 64 characters
-- Tokens have expiration dates
-- Blacklisted tokens are invalid but kept for audit
-- Tokens are deleted when user is deleted (CASCADE)
+
+-   Tokens are unique across the system
+-   Token length is fixed at 64 characters
+-   Tokens have expiration dates
+-   Blacklisted tokens are invalid but kept for audit
+-   Tokens are deleted when user is deleted (CASCADE)
 
 ## Relationship Details
 
 ### One-to-Many Relationships
 
 1. **Users → Categories** (1:N)
-   - One user can have many categories
-   - Categories are user-specific and private
+
+    - One user can have many categories
+    - Categories are user-specific and private
 
 2. **Users → Tags** (1:N)
-   - One user can have many tags
-   - Tags are user-specific and private
+
+    - One user can have many tags
+    - Tags are user-specific and private
 
 3. **Users → Todos** (1:N)
-   - One user can have many todos
-   - Todos are user-specific and private
+
+    - One user can have many todos
+    - Todos are user-specific and private
 
 4. **Users → RefreshTokens** (1:N)
-   - One user can have multiple active refresh tokens
-   - Supports multiple device login
+
+    - One user can have multiple active refresh tokens
+    - Supports multiple device login
 
 5. **Categories → Todos** (1:N)
-   - One category can contain many todos
-   - Todos can be uncategorized (null category)
+
+    - One category can contain many todos
+    - Todos can be uncategorized (null category)
 
 6. **Todos → Subtasks** (1:N)
-   - One todo can have many subtasks
-   - Subtasks belong to exactly one todo
+    - One todo can have many subtasks
+    - Subtasks belong to exactly one todo
 
 ### Many-to-Many Relationships
 
 1. **Todos ↔ Tags** (N:M)
-   - One todo can have multiple tags
-   - One tag can be applied to multiple todos
-   - Implemented via `todo_tags` junction table
+    - One todo can have multiple tags
+    - One tag can be applied to multiple todos
+    - Implemented via `todo_tags` junction table
 
 ## Database Constraints
 
 ### Primary Keys
-- All tables have auto-incrementing integer primary keys
-- `todo_tags` uses composite primary key (todo_id, tag_id)
+
+-   All tables have auto-incrementing integer primary keys
+-   `todo_tags` uses composite primary key (todo_id, tag_id)
 
 ### Foreign Keys
-- **categories.user_id** → users.id (CASCADE DELETE)
-- **tags.user_id** → users.id (CASCADE DELETE)
-- **todos.user_id** → users.id (CASCADE DELETE)
-- **todos.category_id** → categories.id (SET NULL DELETE)
-- **subtasks.todo_id** → todos.id (CASCADE DELETE)
-- **todo_tags.todo_id** → todos.id (CASCADE DELETE)
-- **todo_tags.tag_id** → tags.id (CASCADE DELETE)
-- **refresh_tokens.user_id** → users.id (CASCADE DELETE)
+
+-   **categories.user_id** → users.id (CASCADE DELETE)
+-   **tags.user_id** → users.id (CASCADE DELETE)
+-   **todos.user_id** → users.id (CASCADE DELETE)
+-   **todos.category_id** → categories.id (SET NULL DELETE)
+-   **subtasks.todo_id** → todos.id (CASCADE DELETE)
+-   **todo_tags.todo_id** → todos.id (CASCADE DELETE)
+-   **todo_tags.tag_id** → tags.id (CASCADE DELETE)
+-   **refresh_tokens.user_id** → users.id (CASCADE DELETE)
 
 ### Unique Constraints
-- **users.email** - System-wide unique
-- **refresh_tokens.token** - System-wide unique
-- **categories(user_id, name)** - Unique category names per user
-- **tags(user_id, name)** - Unique tag names per user
-- **todo_tags(todo_id, tag_id)** - Prevent duplicate tag assignments
+
+-   **users.email** - System-wide unique
+-   **refresh_tokens.token** - System-wide unique
+-   **categories(user_id, name)** - Unique category names per user
+-   **tags(user_id, name)** - Unique tag names per user
+-   **todo_tags(todo_id, tag_id)** - Prevent duplicate tag assignments
 
 ### Check Constraints
-- **todos.status** - Must be valid enum value
-- **subtasks.status** - Must be valid enum value
+
+-   **todos.status** - Must be valid enum value
+-   **subtasks.status** - Must be valid enum value
 
 ## Database Indexes
 
 ### Performance Indexes
+
 ```sql
 -- User lookups
 CREATE INDEX idx_users_email ON users(email);
@@ -336,7 +361,7 @@ CREATE INDEX idx_users_email ON users(email);
 -- Category operations
 CREATE INDEX idx_categories_user_id ON categories(user_id);
 
--- Tag operations  
+-- Tag operations
 CREATE INDEX idx_tags_user_id ON tags(user_id);
 
 -- Todo queries
@@ -366,33 +391,37 @@ CREATE INDEX idx_refresh_tokens_expires_at ON refresh_tokens(expires_at);
 ## Data Types and Storage
 
 ### Enum Types
+
 ```sql
 -- Status enum for todos and subtasks
 CREATE TYPE status_enum AS ENUM (
     'not_started',
-    'in_progress', 
+    'in_progress',
     'on_hold',
     'completed'
 );
 ```
 
 ### Storage Considerations
-- **TEXT** columns for title/description (unlimited length)
-- **VARCHAR(255)** for names and emails (reasonable limits)
-- **VARCHAR(64)** for refresh tokens (fixed length)
-- **TIMESTAMP** with timezone support
-- **INTEGER** for all ID fields and sequences
-- **BOOLEAN** for flags (completed, favorite, is_blacklisted)
+
+-   **TEXT** columns for title/description (unlimited length)
+-   **VARCHAR(255)** for names and emails (reasonable limits)
+-   **VARCHAR(64)** for refresh tokens (fixed length)
+-   **TIMESTAMP** with timezone support
+-   **INTEGER** for all ID fields and sequences
+-   **BOOLEAN** for flags (completed, favorite, is_blacklisted)
 
 ## Security Features
 
 ### Data Protection
+
 1. **Password Hashing**: bcrypt with 12 salt rounds
 2. **Token Security**: 64-character random refresh tokens
 3. **User Isolation**: All user data is isolated by user_id
 4. **Cascade Deletes**: Proper cleanup when users are deleted
 
 ### Access Control
+
 1. **User Ownership**: All entities belong to specific users
 2. **Private Data**: No cross-user data access
 3. **Token Expiration**: Refresh tokens have expiration dates
@@ -403,7 +432,7 @@ CREATE TYPE status_enum AS ENUM (
 The database schema is managed through Sequelize migrations:
 
 1. **20250613154321-create-users-table.js** - Users table
-2. **20250613154322-create-categories-table.js** - Categories table  
+2. **20250613154322-create-categories-table.js** - Categories table
 3. **20250613154323-create-tags-table.js** - Tags table
 4. **20250613160145-create-todos-table.js** - Todos table
 5. **20250613160209-create-subtasks-table.js** - Subtasks table
@@ -415,8 +444,9 @@ The database schema is managed through Sequelize migrations:
 ### Common Query Patterns
 
 #### Get User's Todos with Categories and Tags
+
 ```sql
-SELECT 
+SELECT
     t.*,
     c.name as category_name,
     array_agg(tag.name) as tag_names
@@ -430,8 +460,9 @@ ORDER BY t.sequence ASC;
 ```
 
 #### Get Todo with Subtasks and Completion Stats
+
 ```sql
-SELECT 
+SELECT
     t.*,
     COUNT(s.id) as total_subtasks,
     COUNT(CASE WHEN s.status = 'completed' THEN 1 END) as completed_subtasks
@@ -442,6 +473,7 @@ GROUP BY t.id;
 ```
 
 #### Search Todos by Title or Description
+
 ```sql
 SELECT DISTINCT t.*
 FROM todos t
@@ -450,7 +482,7 @@ LEFT JOIN todo_tags tt ON t.id = tt.todo_id
 LEFT JOIN tags tag ON tt.tag_id = tag.id
 WHERE t.user_id = $1
 AND (
-    t.title ILIKE '%' || $2 || '%' 
+    t.title ILIKE '%' || $2 || '%'
     OR t.description ILIKE '%' || $2 || '%'
     OR c.name ILIKE '%' || $2 || '%'
     OR tag.name ILIKE '%' || $2 || '%'

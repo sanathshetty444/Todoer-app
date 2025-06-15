@@ -8,13 +8,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 import { Edit, Trash2 } from "lucide-react";
-import { TODO_STATUS, TSubtask, TTodo } from "@/types";
+import { TODO_STATUS, TTodo } from "@/types";
 import SubtaskList from "./subtasksList";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useMemo } from "react";
+import { DashboardContext } from "@/context/dashboard";
 
 const TodoAccordionList = ({ todos }: { todos: TTodo[] }) => {
     // Sample todo data
-
+    const { handleEditTodo } = useContext(DashboardContext)!;
     // Status color mapping
     const getStatusColor = (
         status: (typeof TODO_STATUS)[keyof typeof TODO_STATUS]
@@ -40,10 +41,8 @@ const TodoAccordionList = ({ todos }: { todos: TTodo[] }) => {
         return status.replace("_", " ").toUpperCase();
     };
 
-    const [completedCount, setCompletedCount] = useState<number[]>([]);
-
-    useEffect(() => {
-        setCompletedCount([
+    const completedCount = useMemo(() => {
+        return [
             ...todos.map(
                 (todo) =>
                     todo.subtasks?.reduce(
@@ -53,7 +52,7 @@ const TodoAccordionList = ({ todos }: { todos: TTodo[] }) => {
                         0
                     ) || 0
             ),
-        ]);
+        ];
     }, [todos]);
 
     return (
@@ -115,10 +114,7 @@ const TodoAccordionList = ({ todos }: { todos: TTodo[] }) => {
                                                 size="sm"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    console.log(
-                                                        "Edit todo:",
-                                                        todo.id
-                                                    );
+                                                    handleEditTodo(todo);
                                                 }}
                                                 className="h-8 w-8 p-0"
                                             >
@@ -145,22 +141,7 @@ const TodoAccordionList = ({ todos }: { todos: TTodo[] }) => {
 
                             <AccordionContent className="px-4 pb-4">
                                 {/* Existing Subtasks */}
-                                <SubtaskList
-                                    todoId={todo.id}
-                                    onStatusChange={(updatedSubTasks) => {
-                                        const count = updatedSubTasks.reduce(
-                                            (acc, subtask) =>
-                                                acc +
-                                                (subtask.status ===
-                                                TODO_STATUS.COMPLETED
-                                                    ? 1
-                                                    : 0),
-                                            0
-                                        );
-                                        completedCount[index] = count;
-                                        setCompletedCount([...completedCount]);
-                                    }}
-                                />
+                                <SubtaskList todoId={todo.id} />
                             </AccordionContent>
                         </AccordionItem>
                     ))}

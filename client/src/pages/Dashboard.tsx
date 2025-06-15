@@ -12,6 +12,9 @@ function Dashboard() {
         search,
         todos,
         showTodo,
+        editTodoFormContext,
+        isEdit,
+        handleEditTodo,
         handleCloseTodo,
         handleOpenTodo,
         handleFilter,
@@ -24,11 +27,19 @@ function Dashboard() {
         <DashboardContext.Provider
             value={{
                 fetchTodos,
+                editTodoFormContext,
+                handleEditTodo,
             }}
         >
             <Header />
             <DashboardHeader handleModalOpen={handleOpenTodo} email={email} />
-            <TodoFormModal handleClose={handleCloseTodo} isOpen={showTodo} />
+            {showTodo && (
+                <TodoFormModal
+                    isEdit={isEdit}
+                    handleClose={handleCloseTodo}
+                    isOpen={showTodo}
+                />
+            )}
             <SearchTodo
                 searchText={search}
                 handleFilter={handleFilter}

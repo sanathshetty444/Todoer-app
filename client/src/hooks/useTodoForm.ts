@@ -1,36 +1,47 @@
 import { CategoryApi } from "@/data/category";
 import { TagsApi } from "@/data/tags";
 import { TodoApi } from "@/data/todo";
-import { SubtasksApi } from "@/data/subtasks";
-import { TCategory, TSubtask } from "@/types";
+import { TCategory } from "@/types";
 import { useContext, useEffect, useState } from "react";
 import { DashboardContext } from "@/context/dashboard";
+import useToast from "./useToast";
 
-export const useTodoForm = ({ handleClose }: { handleClose?: () => void }) => {
-    const { fetchTodos } = useContext(DashboardContext)!;
+export const useTodoForm = ({
+    isEdit,
+    handleClose,
+}: {
+    isEdit?: boolean;
+    handleClose?: () => void;
+}) => {
+    const { fetchTodos, editTodoFormContext } = useContext(DashboardContext)!;
     const [loading, setLoading] = useState(false);
-    const [todoForm, setTodoForm] = useState<{
-        title: string;
-        description: string;
-
-        category: string | null;
-    }>({
+    const initialTodoForm = {
         title: "",
         description: "",
         category: null,
-    });
-
-    const [subTasks, setSubTasks] = useState<Partial<TSubtask>[]>([
-        {
-            title: "",
-        },
-    ]);
+        todoId: null,
+    };
+    const [todoForm, setTodoForm] = useState<{
+        title: string;
+        description: string;
+        category: string | null;
+        todoId: number | null;
+    }>(initialTodoForm);
 
     const [tags, setTags] = useState<string[]>([]);
 
     const [categories, setCategories] = useState<Partial<TCategory>[]>([]);
 
+    const { toast } = useToast();
     useEffect(() => {
+        console.log("useTodoForm mounted", isEdit, editTodoFormContext);
+        if (isEdit && editTodoFormContext) {
+            const { tags, ...rest } = editTodoFormContext;
+            setTodoForm({
+                ...rest,
+            });
+            setTags(tags || []);
+        }
         fetchCategories();
     }, []);
 
@@ -52,22 +63,7 @@ export const useTodoForm = ({ handleClose }: { handleClose?: () => void }) => {
             [name]: value,
         }));
     };
-    const handleAddSubTask = () => {
-        subTasks.push({ title: "" });
-        setSubTasks([...subTasks]);
-    };
 
-    const handleSubTaskChange = (index: number, title: string, status: any) => {
-        setSubTasks((prev) => {
-            prev[index] = {
-                ...prev[index],
-                title,
-                status,
-            };
-
-            return [...prev];
-        });
-    };
     const handleSubmit = async (
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>
     ) => {
@@ -86,23 +82,26 @@ export const useTodoForm = ({ handleClose }: { handleClose?: () => void }) => {
                 tagIds.push(createTag.data?.tag?.id);
             }
 
-            const createTodo = await TodoApi.create({
-                title,
-                description,
-                category_id: Number(category)!,
-                tag_ids: tagIds,
-            });
-
-            const todoId = createTodo.data?.todo?.id;
-
-            for (const subTask of subTasks) {
-                if (subTask.title === "") continue;
-                const subTaskResponse = await SubtasksApi.create({
-                    todo_id: todoId!,
-                    title: subTask.title || "",
+            if (isEdit && todoForm?.todoId) {
+                await TodoApi.update(todoForm?.todoId, {
+                    title,
+                    description,
+                    category_id: Number(category)!,
+                    tag_ids: tagIds,
                 });
+                toast.success("Todo updated successfully!");
+            } else {
+                await TodoApi.create({
+                    title,
+                    description,
+                    category_id: Number(category)!,
+                    tag_ids: tagIds,
+                });
+                toast.success("Todo created successfully!");
             }
+
             fetchTodos();
+            setTodoForm(initialTodoForm);
             handleClose?.();
         } catch (error) {
         } finally {
@@ -114,7 +113,6 @@ export const useTodoForm = ({ handleClose }: { handleClose?: () => void }) => {
         todoForm,
         loading,
         categories,
-        subTasks,
         tags,
         setTags,
         setTodoForm,
@@ -122,7 +120,5 @@ export const useTodoForm = ({ handleClose }: { handleClose?: () => void }) => {
         handleInputChange,
         handleSubmit,
         fetchCategories,
-        handleAddSubTask,
-        handleSubTaskChange,
     };
 };

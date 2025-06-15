@@ -1,6 +1,6 @@
 import { TODO_STATUS, TSubtask } from "@/types";
 import { Plus, Trash2, X } from "lucide-react";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import {
     Select,
     SelectContent,
@@ -10,16 +10,9 @@ import {
 } from "../ui/select";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { DashboardContext } from "@/context/dashboard";
 import { useSubtaskList } from "@/hooks/useSubtaskList";
 
-function SubtaskList({
-    todoId,
-    onStatusChange,
-}: {
-    todoId: number;
-    onStatusChange: (subtask: TSubtask[]) => void;
-}) {
+function SubtaskList({ todoId }: { todoId: number }) {
     const [editingSubtask, setEditingSubtask] = useState<number | null>(null);
 
     const {
@@ -31,7 +24,7 @@ function SubtaskList({
         handleSubTaskChange,
         loading,
         newSubTask,
-    } = useSubtaskList(todoId, onStatusChange);
+    } = useSubtaskList(todoId);
     return (
         <>
             <div className="space-y-3">

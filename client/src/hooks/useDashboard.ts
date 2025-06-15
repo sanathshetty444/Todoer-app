@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { TodoApi } from "@/data/todo";
 import { SubtasksApi } from "@/data/subtasks";
 import { TTodo, TODO_STATUS } from "@/types";
-import { debounce } from "lodash";
+import { debounce, set } from "lodash";
 
 export const useDashboard = () => {
     const user = localStorage.getItem("user");
@@ -12,6 +12,22 @@ export const useDashboard = () => {
     const [showTodo, setShowTodo] = useState(false);
     const [search, setSearchTodo] = useState("");
     const [todos, setTodo] = useState<TTodo[]>([]);
+
+    const [editTodoFormContext, setEditTodoFormContext] = useState<{
+        title: string;
+        description: string;
+        category: string;
+        tags: string[];
+        todoId: number | null;
+    }>({
+        title: "",
+        description: "",
+        category: "",
+        tags: [],
+        todoId: null,
+    });
+
+    const [isEdit, setIsEdit] = useState(false);
 
     useEffect(() => {
         if (!user) {
@@ -24,6 +40,19 @@ export const useDashboard = () => {
     };
     const handleCloseTodo = () => {
         setShowTodo(false);
+        setIsEdit(false);
+    };
+
+    const handleEditTodo = (todo: TTodo) => {
+        setEditTodoFormContext({
+            title: todo.title,
+            description: todo?.description || "",
+            category: String(todo.category?.id || ""),
+            tags: todo?.tags?.map((tag) => tag.name) || [],
+            todoId: todo.id,
+        });
+        setIsEdit(true);
+        handleOpenTodo();
     };
 
     const fetchTodos = async (
@@ -68,11 +97,14 @@ export const useDashboard = () => {
         showTodo,
         todos,
         search,
+        isEdit,
+        editTodoFormContext,
         setShowTodo,
         handleCloseTodo,
         handleOpenTodo,
         handleSearch,
         handleFilter,
         fetchTodos,
+        handleEditTodo,
     };
 };

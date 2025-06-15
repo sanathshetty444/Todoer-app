@@ -495,7 +495,7 @@ router.put(
                     {
                         model: Subtask,
                         as: "subtasks",
-                        attributes: ["id", "title", "completed"],
+                        attributes: ["id", "title", "status"],
                     },
                 ],
             });

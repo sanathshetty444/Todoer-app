@@ -23,7 +23,9 @@ import TagsInput from "../dashboard/tags";
 const TodoFormModal = ({
     isOpen,
     handleClose,
+    isEdit = false,
 }: {
+    isEdit?: boolean;
     isOpen: boolean;
     handleClose: () => void;
 }) => {
@@ -31,16 +33,12 @@ const TodoFormModal = ({
         categories,
         loading,
         todoForm,
-        subTasks,
         tags,
         setTags,
         setTodoForm,
-
-        handleAddSubTask,
         handleInputChange,
-        handleSubTaskChange,
         handleSubmit,
-    } = useTodoForm({ handleClose });
+    } = useTodoForm({ handleClose, isEdit });
 
     if (!isOpen) return null;
     return (
@@ -126,44 +124,6 @@ const TodoFormModal = ({
                         {/* Tags Field */}
                         <TagsInput setTags={setTags} tags={tags} />
 
-                        {/* <div className="space-y-2">
-                            <Label className="text-sm font-medium">
-                                Subtasks
-                            </Label>
-                            <div className="flex gap-2">
-                                <Input
-                                    placeholder="Add a subtask"
-                                    value={}
-                                    onChange={(e) =>
-                                        setNewSubtask(e.target.value)
-                                    }
-                                    onKeyPress={handleKeyPress}
-                                    className="flex-1"
-                                />
-                                <Button
-                                    onClick={addSubtask}
-                                    variant="outline"
-                                    size="sm"
-                                    className="px-4"
-                                >
-                                    Add
-                                </Button>
-                            </div>
-
-                            {subTasks.length > 0 && (
-                                <div className="mt-2 space-y-1">
-                                    {subTasks.map((subtask, index) => (
-                                        <div
-                                            key={index}
-                                            className="text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded"
-                                        >
-                                            • {subtask?.title}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div> */}
-
                         {/* Action Buttons */}
                         <div className="flex gap-3 pt-4">
                             <Button
@@ -171,7 +131,7 @@ const TodoFormModal = ({
                                 onClick={handleSubmit}
                                 disabled={loading}
                             >
-                                Create Todo
+                                {isEdit ? "Update Todo" : "Create Todo"}
                             </Button>
                             <Button
                                 disabled={loading}

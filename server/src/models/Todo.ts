@@ -208,6 +208,16 @@ const todoAttributes: ModelAttributes = {
         type: DataTypes.TEXT,
         allowNull: true,
     },
+    status: {
+        type: DataTypes.ENUM(
+            "not_started",
+            "in_progress",
+            "on_hold",
+            "completed"
+        ),
+        allowNull: false,
+        defaultValue: "not_started",
+    },
     completed: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,

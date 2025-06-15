@@ -40,6 +40,7 @@ router.get(
                 search,
                 sort_by = "sequence",
                 sort_order = "ASC",
+                status,
             } = req.query;
 
             // Build where clause
@@ -66,6 +67,10 @@ router.get(
                     { title: { [Op.iLike]: `%${search}%` } },
                     { description: { [Op.iLike]: `%${search}%` } },
                 ];
+            }
+
+            if (status) {
+                where[Op.or] = [{ status: { [Op.iLike]: `%${status}%` } }];
             }
 
             // Pagination
@@ -107,7 +112,7 @@ router.get(
                     {
                         model: Subtask,
                         as: "subtasks",
-                        attributes: ["id", "title", "completed"],
+                        attributes: ["id", "title", "status"],
                     },
                 ],
                 order: [[sortField, sortDirection] as any],

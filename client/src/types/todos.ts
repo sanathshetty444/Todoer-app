@@ -16,14 +16,21 @@ interface TSubtask {
     title: string;
     completed: boolean;
     sequence?: number;
-    status?: "not_started" | "in_progress" | "completed" | "on_hold";
+    status?: TODO_STATUS;
 }
 
+export enum TODO_STATUS {
+    ALL = "ALL",
+    NOT_STARTED = "not_started",
+    IN_PROGRESS = "in_progress",
+    COMPLETED = "completed",
+    ON_HOLD = "on_hold",
+}
 export interface TTodo {
     id: number;
     title: string;
     description: string | null;
-    status: "not_started" | "in_progress" | "completed" | "on_hold";
+    status: TODO_STATUS;
     completed: boolean;
     favorite: boolean;
     sequence: number;
@@ -50,6 +57,7 @@ export interface TTodosListRequest {
     page?: number;
     limit?: number;
     completed?: boolean;
+    status?: TODO_STATUS | string;
     favorite?: boolean;
     category_id?: number;
     search?: string;

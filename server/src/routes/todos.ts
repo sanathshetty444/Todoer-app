@@ -70,7 +70,7 @@ router.get(
             }
 
             if (status) {
-                where[Op.or] = [{ status: { [Op.iLike]: `%${status}%` } }];
+                where[Op.or] = [{ status: { [Op.eq]: `${status}` } }];
             }
 
             // Pagination

@@ -1,12 +1,12 @@
 // Subtasks API Types
 
-import { TPagination, TTodo } from "./todos";
+import { TODO_STATUS, TPagination, TTodo } from "./todos";
 
 // Common types
 export interface TSubtask {
     id: number;
     title: string;
-    status: "not_started" | "in_progress" | "on_hold" | "completed";
+    status: TODO_STATUS;
     completed: boolean;
     sequence: number;
     todo_id: number;
@@ -103,7 +103,7 @@ export interface TSubtasksDeleteResponse {
 
 // PUT /subtasks/:id/status
 export interface TSubtasksStatusUpdateRequest {
-    status: "not_started" | "in_progress" | "on_hold" | "completed";
+    status: TODO_STATUS;
 }
 
 export interface TSubtasksStatusUpdateResponse {

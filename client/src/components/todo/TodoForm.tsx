@@ -35,7 +35,7 @@ const TodoFormModal = ({
         tags,
         setTags,
         setTodoForm,
-        fetchCategories,
+
         handleAddSubTask,
         handleInputChange,
         handleSubTaskChange,

@@ -1,25 +1,37 @@
 import DashboardHeader from "@/components/dashboard/dashboardHeader";
 import SearchTodo from "@/components/dashboard/searchTodo";
+import TodoAccordionList from "@/components/dashboard/todoList";
 import Header from "@/components/layout/Header";
 import TodoFormModal from "@/components/todo/TodoForm";
+import { DashboardContext } from "@/context/dashboard";
 import { useDashboard } from "@/hooks/useDashboard";
-import React from "react";
 
 function Dashboard() {
     const {
         user,
+        search,
+        todos,
+        showTodo,
         handleCloseTodo,
         handleOpenTodo,
-        showTodo,
         handleFilter,
         handleSearch,
-        search,
-        setShowTodo,
-        todos,
+        fetchTodos,
+        handleSubtaskEdit,
+        handleSubtaskStatusUpdate,
+        handleDeleteSubTask,
     } = useDashboard();
     const email = user ? JSON.parse(user).email : "";
+
     return (
-        <>
+        <DashboardContext.Provider
+            value={{
+                fetchTodos,
+                handleSubtaskEdit,
+                handleSubtaskStatusUpdate,
+                handleDeleteSubTask,
+            }}
+        >
             <Header />
             <DashboardHeader handleModalOpen={handleOpenTodo} email={email} />
             <TodoFormModal handleClose={handleCloseTodo} isOpen={showTodo} />
@@ -28,7 +40,8 @@ function Dashboard() {
                 handleFilter={handleFilter}
                 handleSearch={handleSearch}
             />
-        </>
+            <TodoAccordionList todos={todos} />
+        </DashboardContext.Provider>
     );
 }
 

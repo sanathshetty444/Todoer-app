@@ -3,9 +3,11 @@ import { TagsApi } from "@/data/tags";
 import { TodoApi } from "@/data/todo";
 import { SubtasksApi } from "@/data/subtasks";
 import { TCategory, TSubtask } from "@/types";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { DashboardContext } from "@/context/dashboard";
 
 export const useTodoForm = ({ handleClose }: { handleClose?: () => void }) => {
+    const { fetchTodos } = useContext(DashboardContext)!;
     const [loading, setLoading] = useState(false);
     const [todoForm, setTodoForm] = useState<{
         title: string;
@@ -100,6 +102,7 @@ export const useTodoForm = ({ handleClose }: { handleClose?: () => void }) => {
                     title: subTask.title || "",
                 });
             }
+            fetchTodos();
             handleClose?.();
         } catch (error) {
         } finally {

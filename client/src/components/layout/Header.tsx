@@ -8,44 +8,20 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useHeader } from "@/hooks/useHeader";
+import { CheckSquare } from "lucide-react";
 
 const Header = () => {
     const navigate = useNavigate();
     const { user, isLoading, handleLogout } = useHeader();
 
     return (
-        <header className="bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg">
+        <header className="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg">
             <div className="flex  px-4 py-4 items-center justify-between w-[100%]">
                 <div className="flex items-center gap-3">
-                    <div className="bg-white/20 p-2 rounded-lg">
-                        <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                d="M9 11l3 3 8-8"
-                                stroke="white"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                            <rect
-                                x="3"
-                                y="3"
-                                width="18"
-                                height="18"
-                                rx="2"
-                                ry="2"
-                                stroke="white"
-                                strokeWidth="2"
-                                fill="none"
-                            />
-                        </svg>
-                    </div>
-                    <h1 className="text-2xl font-bold">TODOER</h1>
+                    <CheckSquare className="h-8 w-8" />
+                    <h1 className="text-2xl font-bold tracking-tight">
+                        TODOER
+                    </h1>
                 </div>
 
                 <nav className="hidden md:flex items-center gap-6">
@@ -65,7 +41,7 @@ const Header = () => {
                     </Button>
                 </nav>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 bg-blue-300/20 rounded-full px-2 py-3">
                     {user && (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>

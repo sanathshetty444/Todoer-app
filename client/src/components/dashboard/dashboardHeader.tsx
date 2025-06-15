@@ -14,10 +14,10 @@ function DashboardHeader({
     return (
         <div className="flex flex-col p-6 gap-4">
             <div className="text-black hover:bg-white/10 text-4xl font-bold">
-                What do you want to do today?
+                What would you like to do today?
             </div>
-            <div className="text-black hover:bg-white/10 text-2xl ">
-                Welcome back, {name}
+            <div className="text-black hover:bg-white/10 text-2xl">
+                Welcome back, {name}!
             </div>
             <Card className="mt-4">
                 <CardContent className="p-6">
@@ -25,7 +25,7 @@ function DashboardHeader({
                         {/* Primary Button - Add New Todo */}
                         <Button
                             onClick={handleModalOpen}
-                            className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white text-xl"
+                            className="px-6 py-3 bg-blue-600 hover:bg-blue-600 text-white text-xl"
                         >
                             Add New Todo
                         </Button>
@@ -34,7 +34,7 @@ function DashboardHeader({
                         <Button
                             variant="outline"
                             onClick={() => navigate("/categories")}
-                            className="px-6 py-3 border-blue-500 text-blue-500 hover:bg-blue-50 hover:text-blue-600 text-xl"
+                            className="px-6 py-3 border-blue-600 text-blue-600 hover:bg-blue-50 hover:text-blue-600 text-xl"
                         >
                             Manage Categories
                         </Button>

@@ -21,7 +21,7 @@ const Register = () => {
             <Card className="w-full max-w-md shadow-xl">
                 <CardHeader className="text-center">
                     <div className="flex items-center justify-center mb-4">
-                        <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-2 rounded-lg mr-2">
+                        <div className="bg-gradient-to-r from-blue-600 to-blue-600 p-2 rounded-lg mr-2">
                             <svg
                                 width="24"
                                 height="24"
@@ -124,7 +124,7 @@ const Register = () => {
                         </div>
                         <Button
                             type="submit"
-                            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+                            className="w-full bg-gradient-to-r from-blue-600 to-blue-600 hover:from-blue-600 hover:to-blue-700"
                             disabled={isLoading || !isFormValid}
                         >
                             {isLoading

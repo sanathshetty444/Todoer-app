@@ -127,7 +127,7 @@ const TodoFormModal = ({
                         {/* Action Buttons */}
                         <div className="flex gap-3 pt-4">
                             <Button
-                                className="bg-blue-500 hover:bg-blue-600 text-white px-6"
+                                className="bg-blue-600 hover:bg-blue-600 text-white px-6"
                                 onClick={handleSubmit}
                                 disabled={loading}
                             >

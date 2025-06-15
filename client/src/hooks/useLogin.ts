@@ -79,9 +79,7 @@ export const useLogin = (): UseLoginReturn => {
     };
 
     const onSignUpClick = (): void => {
-        // Handle navigation to sign up page
-        // For example: navigate('/signup') if using React Router
-        console.log("Redirecting to sign up page");
+        navigate("/register");
     };
 
     return {

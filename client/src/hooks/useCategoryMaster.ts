@@ -16,6 +16,7 @@ export const useCategoryMaster = () => {
                 return;
             }
             await CategoryApi.create({ name });
+            toast.success("Category created successfully");
             await fetchCategories();
             setName("");
         } catch (error) {
@@ -38,6 +39,7 @@ export const useCategoryMaster = () => {
                 );
             }
             await CategoryApi.delete(category?.id!);
+            toast.success("Category deleted successfully");
             await fetchCategories();
         } catch (error) {
             console.error("Error deleting category:", error);

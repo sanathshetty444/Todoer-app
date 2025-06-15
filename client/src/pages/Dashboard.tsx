@@ -22,7 +22,7 @@ function Dashboard() {
         handleSearch,
         fetchTodos,
     } = useDashboard();
-    const email = user ? JSON.parse(user).email : "";
+    const name = user ? JSON.parse(user).name : "";
 
     return (
         <MainLayout>
@@ -33,10 +33,7 @@ function Dashboard() {
                     handleEditTodo,
                 }}
             >
-                <DashboardHeader
-                    handleModalOpen={handleOpenTodo}
-                    email={email}
-                />
+                <DashboardHeader handleModalOpen={handleOpenTodo} name={name} />
                 {showTodo && (
                     <TodoFormModal
                         isEdit={isEdit}

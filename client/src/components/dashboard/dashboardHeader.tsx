@@ -4,10 +4,10 @@ import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
 
 function DashboardHeader({
-    email,
+    name,
     handleModalOpen,
 }: {
-    email: string;
+    name: string;
     handleModalOpen: () => void;
 }) {
     const navigate = useNavigate();
@@ -17,7 +17,7 @@ function DashboardHeader({
                 What do you want to do today?
             </div>
             <div className="text-black hover:bg-white/10 text-2xl ">
-                Welcome back, {email}
+                Welcome back, {name}
             </div>
             <Card className="mt-4">
                 <CardContent className="p-6">

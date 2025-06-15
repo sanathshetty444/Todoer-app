@@ -6,6 +6,8 @@ import {
     TAuthLogoutResponse,
     TAuthMeRequest,
     TAuthMeResponse,
+    TAuthRegisterRequest,
+    TAuthRegisterResponse,
 } from "@/types";
 import { AxiosResponse } from "axios";
 
@@ -54,6 +56,30 @@ export class AuthApi {
             return response;
         } catch (error) {
             console.error("Get user error:", error);
+            throw error;
+        }
+    };
+
+    static register = async ({
+        name,
+        email,
+        password,
+    }: {
+        name: string;
+        email: string;
+        password: string;
+    }) => {
+        try {
+            const response: AxiosResponse<TAuthRegisterResponse> =
+                await httpClient.post("/api/auth/register", {
+                    name,
+                    email,
+                    password,
+                } as TAuthRegisterRequest);
+
+            return response;
+        } catch (error) {
+            console.error("Register error:", error);
             throw error;
         }
     };

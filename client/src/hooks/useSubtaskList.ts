@@ -2,12 +2,15 @@ import { DashboardContext } from "@/context/dashboard";
 import { SubtasksApi } from "@/data/subtasks";
 import { TODO_STATUS, TSubtask } from "@/types";
 import { useContext, useEffect, useState } from "react";
+import useToast from "./useToast";
 
 export const useSubtaskList = (todoId: number) => {
     const { fetchTodos } = useContext(DashboardContext)!;
     const [subtasks, setSubtasks] = useState<Partial<TSubtask>[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [newSubTask, setNewSubTask] = useState<string>("");
+
+    const { toast } = useToast();
     const fetchSubtasks = async () => {
         setLoading(true);
         try {
@@ -31,6 +34,7 @@ export const useSubtaskList = (todoId: number) => {
                 title: props.title,
             });
             await fetchTodos(); // Refresh subtasks to get updated data
+            toast.success("Subtask updated successfully");
         } catch (error) {
             console.error("Error updating subtask:", error);
         } finally {
@@ -49,6 +53,7 @@ export const useSubtaskList = (todoId: number) => {
                 status: props.status,
             });
 
+            toast.success("Subtask status updated successfully");
             fetchTodos();
         } catch (error) {
             console.error("Error updating subtask status:", error);
@@ -62,6 +67,7 @@ export const useSubtaskList = (todoId: number) => {
             setLoading(true);
 
             await SubtasksApi.delete(subTaskId);
+            toast.success("Subtask deleted successfully");
 
             fetchTodos();
         } catch (error) {
@@ -80,6 +86,7 @@ export const useSubtaskList = (todoId: number) => {
                 title: newSubTask,
             });
             fetchTodos(); // Refresh subtasks to get updated data
+            toast.success("Subtask added successfully");
         } catch (error) {
             console.error("Error adding subtask:", error);
         } finally {

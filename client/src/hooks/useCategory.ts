@@ -14,6 +14,8 @@ export const useCategory = () => {
             limit,
             search,
             include_todo_count: true,
+            sort_by: "createdAt",
+            sort_order: "DESC",
         });
         setCategories([
             ...categoriesResponse?.data?.categories?.map((item) => ({

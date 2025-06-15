@@ -1,9 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { TodoApi } from "@/data/todo";
-import { SubtasksApi } from "@/data/subtasks";
-import { TTodo, TODO_STATUS, TTodosListResponse } from "@/types";
-import { debounce, set } from "lodash";
+import { TTodo, TTodosListResponse } from "@/types";
+import { debounce } from "lodash";
 
 export const useDashboard = () => {
     const user = localStorage.getItem("user");

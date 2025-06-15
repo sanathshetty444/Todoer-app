@@ -10,6 +10,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import Categories from "./pages/Categories";
+import Register from "./pages/Register";
 
 function App() {
     return (
@@ -32,14 +33,7 @@ function App() {
                     <Route path="/categories" element={<Categories />} />
 
                     {/* Placeholder for register route */}
-                    <Route
-                        path="/register"
-                        element={
-                            <div className="min-h-screen flex items-center justify-center">
-                                <p>Register page coming soon...</p>
-                            </div>
-                        }
-                    />
+                    <Route path="/register" element={<Register />} />
                 </Routes>
 
                 {/* Toast Container for notifications */}

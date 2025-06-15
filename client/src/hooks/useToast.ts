@@ -26,7 +26,7 @@ interface UseToastReturn {
 
 export const useToast = (): UseToastReturn => {
     const defaultOptions: ToastOptions = {
-        position: "bottom-right",
+        position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,

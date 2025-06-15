@@ -45,7 +45,6 @@ function SearchTodo({
                                     <SelectValue placeholder="Select status" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="all">ALL</SelectItem>
                                     {Object.keys(TODO_STATUS).map(
                                         (category) => (
                                             <SelectItem

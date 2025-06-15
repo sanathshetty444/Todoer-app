@@ -6,14 +6,18 @@ import { User, Category, Tag, Todo, Subtask } from "./models";
 import { TokenUtils } from "./utils/token.utils";
 // Import routes
 import apiRoutes from "./routes";
-// Import authentication middleware for protected routes
-import { AuthMiddleware } from "./middlewares/auth";
-import { AuthenticatedRequest } from "./middlewares/base";
+import cors from "cors";
 
 const app = express();
 const PORT = process.env.PORT || 3002;
 
 // Middleware
+app.use(
+    cors({
+        origin: ["http://localhost:3000", "http://localhost:5173"], // Add your frontend URLs
+        credentials: true,
+    })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

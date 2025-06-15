@@ -134,34 +134,6 @@ export class BaseMiddleware {
     }
 
     /**
-     * CORS middleware
-     */
-    static cors() {
-        return (req: Request, res: Response, next: NextFunction) => {
-            res.header(
-                "Access-Control-Allow-Origin",
-                process.env.ALLOWED_ORIGINS || "*"
-            );
-            res.header(
-                "Access-Control-Allow-Methods",
-                "GET, POST, PUT, DELETE, PATCH, OPTIONS"
-            );
-            res.header(
-                "Access-Control-Allow-Headers",
-                "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-            );
-            res.header("Access-Control-Allow-Credentials", "true");
-
-            if (req.method === "OPTIONS") {
-                res.sendStatus(200);
-                return;
-            }
-
-            next();
-        };
-    }
-
-    /**
      * Request logging middleware
      */
     static requestLogger() {

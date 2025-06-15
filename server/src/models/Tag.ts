@@ -68,7 +68,7 @@ export class Tag extends BaseModel implements TagAttributes {
         // Check if tag already exists for this user
         const existing = await this.findByNameAndUser(trimmedName, userId);
         if (existing) {
-            throw new Error("Tag with this name already exists");
+            return existing;
         }
 
         return Tag.create({
